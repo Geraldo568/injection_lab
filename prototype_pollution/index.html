@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lab 48 - Prototype Pollution</title>
+    <style>
+        body { font-family: Arial; background-color: #f4f4f9; color: #333; margin: 20px; }
+        h1 { color: #8e44ad; border-bottom: 2px solid #9b59b6; padding-bottom: 10px; }
+        .vulnerability-note { background-color: #8e44ad; color: white; padding: 10px; border-radius: 4px; text-align: center; margin-bottom: 15px; }
+        .challenge { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+        .success { color: #2ecc71; font-weight: bold; }
+        .error { color: #e74c3c; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="vulnerability-note">VULNÉRABILITÉ CRITIQUE : Client-Side Prototype Pollution - Port 8127</div>
+    <h1>Lab 48 - Initialisation de Paramètres</h1>
+    <div class="challenge">
+        <p>
+            Ce script vulnérable utilise une fonction d'extension de propriétés sans assainissement, permettant la pollution du prototype global <code>Object.prototype</code> via les paramètres d'URL (URL parameters).
+        </p>
+        <p>
+            <b>Objectif :</b> Injecter un payload dans l'URL (via <code>?__proto__</code>) pour définir la propriété <code>isInitialized</code> à <code>true</code>. Si vous réussissez, un message d'alerte XSS sera affiché.
+        </p>
+        <div id="status">Statut: En attente d'initialisation...</div>
+    </div>
+
+    <script>
+        // Fonction d'extension VULNÉRABLE (simule un framework comme jQuery.extend)
+        function merge(target, source) {
+            for (let key in source) {
+                if (key in target && typeof target[key] === 'object' && typeof source[key] === 'object') {
+                    merge(target[key], source[key]);
+                } else {
+                    // VULNERABLE POINT: Si key est __proto__, Object.prototype est pollué
+                    target[key] = source[key]; 
+                }
+            }
+        }
+
+        const defaults = {
+            isInitialized: false,
+            // Propriété qui sera utilisée plus tard
+            template: '<p class="error">Erreur: non initialisé.</p>' 
+        };
+
+        const config = {};
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Convertir les paramètres URL en objet pour l'injection
+        const urlObject = {};
+        for (const [key, value] of urlParams.entries()) {
+            urlObject[key] = value;
+        }
+
+        // 1. Pollution se produit ici
+        merge(config, urlObject); 
+
+        // 2. Le script vérifie une propriété par défaut (qui est maintenant polluée)
+        const finalConfig = merge({}, defaults);
+        merge(finalConfig, config);
+        
+        const statusDiv = document.getElementById('status');
+        
+        if (finalConfig.isInitialized) {
+            // 3. Déclenchement de l'exploit (XSS)
+            statusDiv.innerHTML = '<span class="success">Prototype Pollué !</span>' + defaults.template;
+            // Le payload XSS doit être injecté via la pollution de defaults.template (pas de l'injection directe ici)
+            if (defaults.template.includes('WA F_BYPASS_SUCCESS')) {
+                 alert('Prototype Pollution RCE/XSS Réussie!');
+                 statusDiv.innerHTML = '<span class="success">Prototype Pollution RCE/XSS Réussie! Vérifiez l\'alerte.</span>';
+            }
+        } else {
+            statusDiv.innerHTML = 'Statut: Non initialisé (essayez d\'injecter `__proto__[template]=<script>alert(1)</script>`).';
+        }
+    </script>
+</body>
+</html>

@@ -1,3 +1,5 @@
+──(levelup㉿LevelUp)-[~/Documents/injection_lab]
+└─$ cat docker-compose.yml                             
 version: '3.8'
 
 # WARN: the 'version' attribute is obsolete, but we keep it for now.
@@ -528,7 +530,7 @@ services:
   redis_service:
     image: redis:6.2-alpine
     ports:
-      - "6379:6379"  
+      - "6379:6379" 
     networks:
       - app-net
     container_name: redis_service
@@ -578,6 +580,9 @@ services:
     container_name: hrs_classic_backend
 
 
+
+
+
   # 46. SSTI RCE Lab (Python/Jinja2) - Port 8125
   ssti_rce_app:
     build:
@@ -592,7 +597,7 @@ services:
   # 47. Insecure Deserialization (Pickle) - Port 8126
   insecure_deser_app:
     build:
-      context: ./insecure_deser_rce # CORRECTION APPLIQUÉE ICI
+      context: ./insecure_deser_gadget
       dockerfile: Dockerfile
     ports:
       - "8126:80"
@@ -689,6 +694,7 @@ services:
     container_name: jwt_algo_confusion_app
 
 
+
   mongodb:
     image: mongo:4.4
     ports:
@@ -706,3 +712,5 @@ volumes:
 networks:
   app-net:
     driver: bridge
+                                                                                                                                                                                                                    
+┌──(levelup㉿LevelUp)-[~/Documents/injection_lab]

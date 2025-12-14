@@ -6,3 +6,30 @@ __pycache__/
 volumes/
 db_data/
 *.tar.gz
+
+# Docker
+.env
+*.pem
+/mongodb_data
+# Ignore local Docker Compose cache
+.docker/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+.mypy_cache/
+.pytest_cache/
+
+# Node.js
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# MySQL/Database
+*.sqlite
+*.sql
