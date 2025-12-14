@@ -1,0 +1,11 @@
+{
+  "name": "nosqli-lab",
+  "version": "1.0.0",
+  "description": "Vulnerable Node.js/Express app for NoSQLi",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongodb": "^4.0.1",
+    "body-parser": "^1.20.2"
+  }
+}

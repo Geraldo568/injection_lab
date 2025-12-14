@@ -1,0 +1,8 @@
+# Fichiers et répertoires générés par Docker et Python
+__pycache__/
+*.pyc
+.DS_Store
+# Ne jamais inclure les conteneurs ou les volumes
+volumes/
+db_data/
+*.tar.gz

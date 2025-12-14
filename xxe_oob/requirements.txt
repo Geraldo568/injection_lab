@@ -1,0 +1,2 @@
+Flask
+lxml # Un analyseur XML populaire, souvent configuré de manière vulnérable.

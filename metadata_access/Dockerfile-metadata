@@ -1,0 +1,5 @@
+FROM python:3.9-slim
+WORKDIR /app
+COPY metadata_server.py .
+EXPOSE 80
+CMD ["python", "metadata_server.py"]

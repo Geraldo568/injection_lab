@@ -1,0 +1,556 @@
+version: '3.8'
+
+# WARN: the 'version' attribute is obsolete, but we keep it for now.
+
+services:
+  # 1. Advanced SQL Injection Lab (PHP) - Access on Port 8080
+  sqli_app:
+    build:
+      context: ./sqli
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql_db
+    networks:
+      - app-net
+    container_name: sqli_app
+
+  mysql_db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: sqli_db
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+    volumes:
+      - ./sqli/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-net
+    container_name: mysql_db
+
+  # 2. NoSQL Injection Lab (Node.js) - Access on Port 8081
+  nosqli_app:
+    build:
+      context: ./nosqli
+      dockerfile: Dockerfile
+    ports:
+      - "8081:3000"
+    depends_on:
+      - mongodb
+    networks:
+      - app-net
+    environment:
+      MONGODB_URI: "mongodb://mongodb:27017/nosql_lab"
+    container_name: nosqli_app
+
+  # 3. OS Command Injection Lab (Node.js) - Port 8082
+  command_injection_app:
+    build:
+      context: ./command_injection
+      dockerfile: Dockerfile
+    ports:
+      - "8082:3002"
+    networks:
+      - app-net
+    container_name: command_injection_app
+
+  # 4. Cross-Site Scripting Lab (PHP) - Port 8083
+  xss_app:
+    build:
+      context: ./xss
+      dockerfile: Dockerfile
+    ports:
+      - "8083:80"
+    networks:
+      - app-net
+    container_name: xss_app
+
+  # 5. Cross-Site Request Forgery Lab (PHP) - Port 8084
+  csrf_app:
+    build:
+      context: ./csrf
+      dockerfile: Dockerfile
+    ports:
+      - "8084:80"
+    networks:
+      - app-net
+    container_name: csrf_app
+
+  # 6. Clickjacking Lab (PHP) - Port 8085
+  clickjacking_app:
+    build:
+      context: ./clickjacking
+      dockerfile: Dockerfile
+    ports:
+      - "8085:80"
+    networks:
+      - app-net
+    container_name: clickjacking_app
+
+  # 7. Server-Side Request Forgery Lab (Node.js) - Port 8086
+  ssrf_app:
+    build:
+      context: ./ssrf
+      dockerfile: Dockerfile
+    ports:
+      - "8086:3003"
+    networks:
+      - app-net
+    container_name: ssrf_app
+
+  # 8. Insecure Direct Object Reference Lab (PHP) - Port 8087
+  idor_app:
+    build:
+      context: ./idor
+      dockerfile: Dockerfile
+    ports:
+      - "8087:80"
+    networks:
+      - app-net
+    container_name: idor_app
+
+  # 9. Unrestricted File Upload Lab (PHP) - Port 8088
+  ufu_app:
+    build:
+      context: ./ufu
+      dockerfile: Dockerfile
+    ports:
+      - "8088:80"
+    networks:
+      - app-net
+    container_name: ufu_app
+
+  # 10. Insecure Deserialization Lab (PHP) - Port 8089
+  id_app:
+    build:
+      context: ./id
+      dockerfile: Dockerfile
+    ports:
+      - "8089:80"
+    networks:
+      - app-net
+    container_name: id_app
+
+  # 11. HTTP Request Smuggling Lab (Python) - Port 8090
+  hrs_back:
+    build:
+      context: ./hrs
+      dockerfile: Dockerfile-back
+    networks:
+      - app-net
+    container_name: hrs_back
+    
+  hrs_front:
+    build:
+      context: ./hrs
+      dockerfile: Dockerfile-front
+    ports:
+      - "8090:80"
+    depends_on:
+      - hrs_back
+    networks:
+      - app-net
+    container_name: hrs_front
+
+
+  # 12. XXE Injection Lab (PHP) - Port 8091
+  xxe_app:
+    build:
+      context: ./xxe
+      dockerfile: Dockerfile
+    ports:
+      - "8091:80"
+    networks:
+      - app-net
+    container_name: xxe_app
+
+  # 13. Cloud Metadata Endpoint Access Lab (Python) - Port 8092
+  metadata_endpoint:
+    build:
+      context: ./metadata_access
+      dockerfile: Dockerfile-metadata
+    networks:
+      - app-net
+    container_name: metadata_endpoint
+    
+  metadata_app:
+    build:
+      context: ./metadata_access
+      dockerfile: Dockerfile-app
+    ports:
+      - "8092:80"
+    depends_on:
+      - metadata_endpoint
+    networks:
+      - app-net
+    container_name: metadata_app
+
+  # 14. Race Condition Lab (PHP) - Port 8093
+  rc_app:
+    build:
+      context: ./race_condition
+      dockerfile: Dockerfile
+    ports:
+      - "8093:80"
+    networks:
+      - app-net
+    container_name: rc_app
+
+  # 15. Web Cache Deception Lab (PHP) - Port 8094
+  wcd_app:
+    build:
+      context: ./wcd_deception
+      dockerfile: Dockerfile
+    ports:
+      - "8094:80"
+    networks:
+      - app-net
+    container_name: wcd_app
+
+  # 16. HTTP Request Smuggling Lab (Python) - Port 8095
+  hrs_backend:
+    build:
+      context: ./hrs_smuggling
+      dockerfile: Dockerfile-backend
+    networks:
+      - app-net
+    container_name: hrs_backend
+    
+  hrs_frontend:
+    build:
+      context: ./hrs_smuggling
+      dockerfile: Dockerfile-frontend
+    ports:
+      - "8095:80"
+    depends_on:
+      - hrs_backend
+    networks:
+      - app-net
+    container_name: hrs_frontend
+
+  # 17. Server Side Template Injection Lab (Python) - Port 8096
+  ssti_app:
+    build:
+      context: ./ssti_injection
+      dockerfile: Dockerfile
+    ports:
+      - "8096:80"
+    networks:
+      - app-net
+    container_name: ssti_app
+
+  # 18. IDOR Advanced Lab (PHP) - Port 8097
+  idor_adv_app:
+    build:
+      context: ./idor_advanced
+      dockerfile: Dockerfile
+    ports:
+      - "8097:80"
+    networks:
+      - app-net
+    container_name: idor_adv_app
+
+  # 19. Web Cache Poisoning Lab (PHP) - Port 8098
+  wcp_app:
+    build:
+      context: ./web_cache_poisoning
+      dockerfile: Dockerfile
+    ports:
+      - "8098:80"
+    networks:
+      - app-net
+    container_name: wcp_app
+
+  # 20. DOM Clobbering Lab (PHP) - Port 8099
+  dom_clob_app:
+    build:
+      context: ./dom_clobbering
+      dockerfile: Dockerfile
+    ports:
+      - "8099:80"
+    networks:
+      - app-net
+    container_name: dom_clob_app
+
+  # 21. CORS Misconfiguration Lab (Python) - Port 8100
+  cors_app:
+    build:
+      context: ./cors_misconfig
+      dockerfile: Dockerfile
+    ports:
+      - "8100:80"
+    networks:
+      - app-net
+    container_name: cors_app
+
+  # 22. Password Reset Token Leak Lab (PHP) - Port 8101
+  token_leak_app:
+    build:
+      context: ./reset_token_leak
+      dockerfile: Dockerfile
+    ports:
+      - "8101:80"
+    networks:
+      - app-net
+    container_name: token_leak_app
+
+  # 23. SSRF Advanced (Filter Bypass) Lab (Python) - Port 8102
+  ssrf_adv_app:
+    build:
+      context: ./ssrf_advanced
+      dockerfile: Dockerfile
+    ports:
+      - "8102:80"
+    depends_on:
+      - metadata_endpoint
+    networks:
+      - app-net
+    container_name: ssrf_adv_app
+
+  # 24. XXE Injection Advanced (OOB) Lab (Python) - Port 8103
+  xxe_oob_app:
+    build:
+      context: ./xxe_oob
+      dockerfile: Dockerfile
+    ports:
+      - "8103:80"
+    networks:
+      - app-net
+    container_name: xxe_oob_app
+
+  # 25. Mass Assignment Lab (Python) - Port 8104
+  mass_assign_app:
+    build:
+      context: ./mass_assignment
+      dockerfile: Dockerfile
+    ports:
+      - "8104:80"
+    networks:
+      - app-net
+    container_name: mass_assign_app
+
+  # 26. Unsafe Deserialization Lab (Python) - Port 8105
+  unsafe_deser_app:
+    build:
+      context: ./unsafe_deserialization
+      dockerfile: Dockerfile
+    ports:
+      - "8105:80"
+    networks:
+      - app-net
+    container_name: unsafe_deser_app
+
+  # 27. NoSQL Injection Lab (Python) - Port 8106
+  nosql_inj_app:
+    build:
+      context: ./nosql_injection
+      dockerfile: Dockerfile
+    ports:
+      - "8106:80"
+    networks:
+      - app-net
+    container_name: nosql_inj_app
+
+  # 28. Environment Variable Leak Lab (Python) - Port 8107
+  env_leak_app:
+    build:
+      context: ./env_leak
+      dockerfile: Dockerfile
+    ports:
+      - "8107:80"
+    networks:
+      - app-net
+    environment:
+      SECRET_API_KEY: "EXPOSED_DOCKER_SECRET_456"
+      DB_PASSWORD: "DB_PW_TO_BE_STOLEN"
+    container_name: env_leak_app
+
+  # 29. AI Injection (Prompt Injection) Lab (Python) - Port 8108
+  ai_inj_app:
+    build:
+      context: ./ai_injection
+      dockerfile: Dockerfile
+    ports:
+      - "8108:80"
+    networks:
+      - app-net
+    container_name: ai_inj_app
+
+  # 30. OAuth 2.0 Leak Lab (PHP) - Port 8109
+  oauth_leak_app:
+    build:
+      context: ./oauth_leak
+      dockerfile: Dockerfile
+    ports:
+      - "8109:80"
+    networks:
+      - app-net
+    container_name: oauth_leak_app
+
+  # 31. JWT Signature Forgery Lab (Python) - Port 8110
+  jwt_forgery_app:
+    build:
+      context: ./jwt_forgery
+      dockerfile: Dockerfile
+    ports:
+      - "8110:80"
+    networks:
+      - app-net
+    container_name: jwt_forgery_app
+
+  # 32. HTTP Request Tunneling Lab (PHP) - Port 8111
+  http_tunnel_app:
+    build:
+      context: ./http_tunneling
+      dockerfile: Dockerfile
+    ports:
+      - "8111:80"
+    networks:
+      - app-net
+    container_name: http_tunnel_app
+
+  # 33. XSS Stored WAF Evasion Lab (Python) - Port 8112
+  xss_waf_app:
+    build:
+      context: ./xss_waf
+      dockerfile: Dockerfile
+    ports:
+      - "8112:80"
+    networks:
+      - app-net
+    container_name: xss_waf_app
+
+  # 34. Web Cache Deception Advanced Lab (Python) - Port 8113
+  wcd_adv_app: # <<< RENOMMÉ pour éviter le conflit avec Lab 15
+    build:
+      context: ./web_cache_deception
+      dockerfile: Dockerfile
+    ports:
+      - "8113:80"
+    networks:
+      - app-net
+    container_name: wcd_adv_app
+
+  # 35. Dependency Confusion Lab (Python) - Port 8114
+  dep_conf_app:
+    build:
+      context: ./dependency_confusion
+      dockerfile: Dockerfile
+    ports:
+      - "8114:80"
+    networks:
+      - app-net
+    container_name: dep_conf_app
+
+  # 36. MFA Bypass Lab (Python) - Port 8115
+  mfa_bypass_app:
+    build:
+      context: ./mfa_bypass
+      dockerfile: Dockerfile
+    ports:
+      - "8115:80"
+    networks:
+      - app-net
+    container_name: mfa_bypass_app
+
+  # 37. Blind XXE OOB Lab (Python) - Port 8116
+  blind_xxe_oob_app:
+    build:
+      context: ./blind_xxe_oob
+      dockerfile: Dockerfile
+    ports:
+      - "8116:80"
+    networks:
+      - app-net
+    container_name: blind_xxe_oob_app
+
+  # 38. Insecure Deserialization RCE Lab (Python) - Port 8117
+  insecure_deser_rce_app:
+    build:
+      context: ./insecure_deser_rce
+      dockerfile: Dockerfile
+    ports:
+      - "8117:80"
+    networks:
+      - app-net
+    container_name: insecure_deser_rce_app
+
+  # 39. HPP WAF Bypass Lab (Python) - Port 8118
+  hpp_waf_bypass_app:
+    build:
+      context: ./http_param_pollution
+      dockerfile: Dockerfile
+    ports:
+      - "8118:80"
+    networks:
+      - app-net
+    container_name: hpp_waf_bypass_app
+
+  # 40. SSRF Gopher Redis Lab (Python) - Port 8119
+  ssrf_gopher_redis_app:
+    build:
+      context: ./ssrf_gopher_redis
+      dockerfile: Dockerfile
+    ports:
+      - "8119:80"
+    networks:
+      - app-net
+    container_name: ssrf_gopher_redis_app
+    depends_on:
+      - redis_service
+
+  # 41. Race Condition Lab (Python) - Port 8120
+  race_condition_app:
+    build:
+      context: ./race_condition
+      dockerfile: Dockerfile
+    ports:
+      - "8120:80"
+    networks:
+      - app-net
+    container_name: race_condition_app
+    
+  # 42. NoSQL RCE Lab (Node.js/MongoDB) - Port 8121
+  nosql_rce_app:
+    build:
+      context: ./nosql_rce
+      dockerfile: Dockerfile
+    ports:
+      - "8121:80"
+    networks:
+      - app-net
+    container_name: nosql_rce_app
+    depends_on:
+      - mongodb
+      
+  # SERVICE REDIS REQUIS POUR LAB 40
+  redis_service:
+    image: redis:6.2-alpine
+    ports:
+      - "6379:6379" 
+    networks:
+      - app-net
+    container_name: redis_service
+
+
+
+
+
+  mongodb:
+    image: mongo:4.4
+    ports:
+      - "27017:27017"
+    networks:
+      - app-net
+    volumes:
+      - mongodb_data:/data/db
+    container_name: mongodb
+
+
+volumes:
+  mongodb_data:
+
+networks:
+  app-net:
+    driver: bridge
